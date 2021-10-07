@@ -7,16 +7,14 @@ describe('auth-lab routes', () => {
   beforeEach(() => {
     return setup(pool);
   });
+  jest.setTimeout(10000);
 
   const userT = { email: 'tri@ana.com', password: 'rainman' };
 
   it('should sign up a new user with a POST ', async () => {
-    return await request(app)
-      .post('/api/vi/auth/signup')
-      .send(userT)
-      .then((res) => {
-        expect(res.body).toEqual({ ...userT, id: expect.any(String) });
-      });
+    const res = await request(app).post('/api/v1/auth/sign-up').send(userT);
+
+    expect(res.body).toEqual({ id: expect.any(String), email: 'tri@ana.com' });
   });
 
   afterAll(() => {
