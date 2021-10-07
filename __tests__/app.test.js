@@ -2,7 +2,7 @@ const pool = require('../lib/utils/pool.js');
 const setup = require('../data/setup.js');
 const request = require('supertest');
 const app = require('../lib/app.js');
-const usersService = require('../lib/services/usersService');
+const UserServices = require('../lib/services/usersService');
 
 describe('auth-lab routes', () => {
   beforeEach(() => {
@@ -20,7 +20,7 @@ describe('auth-lab routes', () => {
   });
 
   it('logs in a user via POST', async () => {
-    await usersService.createUser(userT);
+    await UserServices.createUser(userJ);
 
     const res = await request(app).post('/api/v1/auth/login').send(userJ);
 
