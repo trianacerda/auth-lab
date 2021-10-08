@@ -42,7 +42,7 @@ describe('auth-lab routes', () => {
   it('should throw a 401 err if you type in the wrong stuff', async () => {
     await UserServices.createUser(userJ);
     const res = await request(app)
-      .post('/api/v1/auth/sign-up')
+      .post('/api/v1/auth/login')
       .send({ email: 'jon@athan.com', password: 'sistaRAM' });
 
     expect(res.status).toBe(401);
