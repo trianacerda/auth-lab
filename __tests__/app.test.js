@@ -48,18 +48,17 @@ describe('auth-lab routes', () => {
     expect(res.status).toBe(401);
   });
 
-  // it('should get /me as the current logged in user', async () => {
-  //   await UserServices.createUser(userT);
-  //   const agent = request.agent(app);
-  //   await agent.post('/api/v1/auth/login').send(userT);
+  it('should get /me as the current logged in user', async () => {
+    await UserServices.createUser(userT);
+    const agent = request.agent(app);
+    await agent.post('/api/v1/auth/login').send(userT);
 
-  //   const res = await agent.get('/api/v1/auth/me');
-  //   expect(res.body).toEqual({
-  //     id: expect.any(String),
-  //     email: 'tri@ana.com',
-  //     userID: 1,
-  //   });
-  // });
+    const res = await agent.get('/api/v1/auth/me');
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      email: 'tri@ana.com',
+    });
+  });
 
   afterAll(() => {
     pool.end();
