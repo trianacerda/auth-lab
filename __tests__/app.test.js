@@ -8,7 +8,6 @@ describe('auth-lab routes', () => {
   beforeEach(() => {
     return setup(pool);
   });
-  jest.setTimeout(10000);
 
   const userT = { email: 'tri@ana.com', password: 'rainman' };
   const userJ = { email: 'jon@athan.com', password: 'brotherRAM' };
@@ -16,7 +15,10 @@ describe('auth-lab routes', () => {
   it('should sign up a new user with a POST ', async () => {
     const res = await request(app).post('/api/v1/auth/sign-up').send(userT);
 
-    expect(res.body).toEqual({ id: expect.any(String), email: 'tri@ana.com' });
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      email: 'tri@ana.com',
+    });
   });
 
   it('logs in a user via POST', async () => {
@@ -29,6 +31,19 @@ describe('auth-lab routes', () => {
       email: 'jon@athan.com',
     });
   });
+
+  // it('should get /me as the current logged in user', async (req, res, next) => {
+  //   await UserServices.createUser(userT);
+  //   const agent = request.agent(app);
+  //    await agent
+  //     .get('/api/v1/auth/me')
+  //     .then((res) => {
+  //       expect(res.body).toEqual({
+  //         id: expect.any(String),
+  //         userID: user.id,
+  //       });
+  //     });
+  // });
 
   afterAll(() => {
     pool.end();
