@@ -21,6 +21,13 @@ describe('auth-lab routes', () => {
     });
   });
 
+  it('should throw a 400 err if email exists', async () => {
+    await UserServices.createUser(userJ);
+    const res = await request(app).post('/api/v1/auth/sign-up').send(userJ);
+
+    expect(res.status).toBe(400);
+  });
+
   it('logs in a user via POST', async () => {
     await UserServices.createUser(userJ);
 
