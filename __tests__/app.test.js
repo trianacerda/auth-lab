@@ -9,8 +9,16 @@ describe('auth-lab routes', () => {
     return setup(pool);
   });
 
-  const userT = { email: 'tri@ana.com', password: 'rainman' };
-  const userJ = { email: 'jon@athan.com', password: 'brotherRAM' };
+  const userT = {
+    email: 'tri@ana.com',
+    password: 'rainman',
+    roleTitle: 'USER',
+  };
+  const userJ = {
+    email: 'jon@athan.com',
+    password: 'brotherRAM',
+    roleTitle: 'USER',
+  };
 
   it('should sign up a new user with a POST ', async () => {
     const res = await request(app).post('/api/v1/auth/sign-up').send(userT);
@@ -56,7 +64,10 @@ describe('auth-lab routes', () => {
     const res = await agent.get('/api/v1/auth/me');
     expect(res.body).toEqual({
       id: expect.any(String),
-      email: 'tri@ana.com',
+      email: userT.email,
+      role: 'USER',
+      exp: expect.any(Number),
+      iat: expect.any(Number),
     });
   });
 
