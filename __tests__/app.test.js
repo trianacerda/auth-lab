@@ -12,12 +12,12 @@ describe('auth-lab routes', () => {
   const userT = {
     email: 'tri@ana.com',
     password: 'rainman',
-    roleTitle: 'USER',
+    title: 'USER',
   };
   const userJ = {
     email: 'jon@athan.com',
     password: 'brotherRAM',
-    roleTitle: 'USER',
+    title: 'USER',
   };
 
   it('should sign up a new user with a POST ', async () => {
@@ -70,6 +70,44 @@ describe('auth-lab routes', () => {
       role: 'USER',
       exp: expect.any(Number),
       iat: expect.any(Number),
+    });
+  });
+
+  it('should get /me as the current logged in user', async () => {
+    await UserServices.createUser(userT);
+    const agent = request.agent(app);
+    await agent.post('/api/v1/auth/login').send(userT);
+
+    const res = await agent.get('/api/v1/auth/me');
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      email: userT.email,
+      role: 'USER',
+      exp: expect.any(Number),
+      iat: expect.any(Number),
+    });
+  });
+
+  it('should be a route that is only for ADMIN access', async () => {
+    await UserServices.create(userT);
+    const adminUser = await UserServices.create({
+      email: 'boss@admin.com',
+      password: 'bossy',
+      role: 'ADMIN',
+    });
+
+    const agent = request.agent(app);
+    await agent.post('/api/v1/auth/login').send(adminUser);
+
+    await agent
+      .patch('/api/v1/auth/dashboard')
+      .send({ ...userT, role: 'ADMIN' });
+    const res = await agent.admin('/api/v1/auth/');
+
+    expect(res.status).toEqual(200);
+    expect(res.body).toEqual({
+      status: 200,
+      message: 'Role successfully changed!',
     });
   });
 
