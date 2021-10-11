@@ -25,7 +25,8 @@ describe('auth-lab routes', () => {
 
     expect(res.body).toEqual({
       id: expect.any(String),
-      email: 'tri@ana.com',
+      email: userT.email,
+      role: 'USER',
     });
   });
 
@@ -43,11 +44,12 @@ describe('auth-lab routes', () => {
 
     expect(res.body).toEqual({
       id: expect.any(String),
-      email: 'jon@athan.com',
+      email: userJ,
+      role: 'USER',
     });
   });
 
-  it('should throw a 401 err if you type in the wrong stuff', async () => {
+  it('should throw a 401 err if wrong info/invalid JWT', async () => {
     await UserServices.createUser(userJ);
     const res = await request(app)
       .post('/api/v1/auth/login')

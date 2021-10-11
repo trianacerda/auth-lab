@@ -12,3 +12,5 @@ CREATE TABLE users (
   password_hash TEXT NOT NULL
 );
 
+INSERT INTO roles (title)
+VALUES ('ADMIN'), ('USER');
