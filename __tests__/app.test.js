@@ -89,8 +89,8 @@ describe('auth-lab routes', () => {
   });
 
   it('should be a route that is only for ADMIN access', async () => {
-    await UserServices.create(userT);
-    const adminUser = await UserServices.create({
+    await UserServices.createUser(userT);
+    const adminUser = await UserServices.createUser({
       email: 'boss@admin.com',
       password: 'bossy',
       role: 'ADMIN',
