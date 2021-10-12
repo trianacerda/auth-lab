@@ -9,15 +9,24 @@ describe('auth-lab routes', () => {
     return setup(pool);
   });
 
-  const userT = { email: 'tri@ana.com', password: 'rainman' };
-  const userJ = { email: 'jon@athan.com', password: 'brotherRAM' };
+  const userT = {
+    email: 'tri@ana.com',
+    password: 'rainman',
+    title: 'USER',
+  };
+  const userJ = {
+    email: 'jon@athan.com',
+    password: 'brotherRAM',
+    title: 'USER',
+  };
 
   it('should sign up a new user with a POST ', async () => {
     const res = await request(app).post('/api/v1/auth/sign-up').send(userT);
 
     expect(res.body).toEqual({
       id: expect.any(String),
-      email: 'tri@ana.com',
+      email: userT.email,
+      role: 'USER',
     });
   });
 
@@ -35,11 +44,12 @@ describe('auth-lab routes', () => {
 
     expect(res.body).toEqual({
       id: expect.any(String),
-      email: 'jon@athan.com',
+      email: userJ,
+      role: 'USER',
     });
   });
 
-  it('should throw a 401 err if you type in the wrong stuff', async () => {
+  it('should throw a 401 err if wrong info/invalid JWT', async () => {
     await UserServices.createUser(userJ);
     const res = await request(app)
       .post('/api/v1/auth/login')
@@ -56,7 +66,51 @@ describe('auth-lab routes', () => {
     const res = await agent.get('/api/v1/auth/me');
     expect(res.body).toEqual({
       id: expect.any(String),
-      email: 'tri@ana.com',
+      email: userT.email,
+      role: 'USER',
+      exp: expect.any(Number),
+      iat: expect.any(Number),
+    });
+  });
+
+  it.only('should get /me as the current logged in user', async () => {
+    const res = await request(app).post('/api/v1/auth/sign-up').send(userT);
+
+    // loggedInUser is returning an error HTTP response obj-----------!!!!!!!!!
+
+    // const loggedInUser = await request(app)
+    //   .post('/api/v1/auth/login')
+    //   .send(userT);
+    // console.log('logged', loggedInUser);
+
+    // const res = await request(app).get('/api/v1/auth/me');
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      email: userT.email,
+      role: '2',
+    });
+  });
+
+  it('should be a route that is only for ADMIN access', async () => {
+    await UserServices.createUser(userT);
+    const adminUser = await UserServices.createUser({
+      email: 'boss@admin.com',
+      password: 'bossy',
+      role: 'ADMIN',
+    });
+
+    const agent = request.agent(app);
+    await agent.post('/api/v1/auth/login').send(adminUser);
+
+    await agent
+      .patch('/api/v1/auth/dashboard')
+      .send({ ...userT, role: 'ADMIN' });
+    const res = await agent.admin('/api/v1/auth/');
+
+    expect(res.status).toEqual(200);
+    expect(res.body).toEqual({
+      status: 200,
+      message: 'Role successfully changed!',
     });
   });
 
