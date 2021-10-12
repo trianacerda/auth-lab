@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS roles;
 
 CREATE TABLE roles (
@@ -9,8 +9,8 @@ CREATE TABLE roles (
 CREATE TABLE users (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   email TEXT NOT NULL UNIQUE,
-  password_hash TEXT NOT NULL
-  role_id BIGINT NOT NULL,
+  password_hash TEXT NOT NULL,
+  role_id BIGINT,
   FOREIGN KEY (role_id) REFERENCES roles(id)
 );
 
